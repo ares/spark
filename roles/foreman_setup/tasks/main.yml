@@ -1,0 +1,11 @@
+---
+- name: 'Registration playbook'
+  copy:
+    src: templates/register.yaml
+    dest: /etc/foreman/register.yaml
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Add localhost as unmanaged host
+  command: "ansible-playbook /etc/foreman/register.yaml -e foreman_admin_password={{ foreman_admin_password }}"
