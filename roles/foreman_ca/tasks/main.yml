@@ -1,0 +1,60 @@
+---
+- name: 'Install openssl'
+  yum:
+    name: openssl
+    state: present
+
+- name: 'Create certs directory'
+  file:
+    path: "{{ foreman_ca_directory_certs }}"
+    state: directory
+    mode: 0755
+
+- name: 'Create keys directory'
+  file:
+    path: "{{ foreman_ca_directory_keys }}"
+    state: directory
+    mode: 0755
+
+- name: 'Create requests directory'
+  file:
+    path: "{{ foreman_ca_directory_requests }}"
+    state: directory
+    mode: 0755
+
+- name: 'Deploy configuration file'
+  template:
+    src: openssl.cnf.j2
+    dest: "{{ foreman_ca_directory }}/openssl.cnf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: 'Create index file'
+  file:
+    path: "{{ foreman_ca_directory }}/index.txt"
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+
+- name: 'Ensure serial starting number'
+  template:
+    src: serial.j2
+    dest: "{{ foreman_ca_directory }}/serial"
+    force: no
+    owner: root
+    group: root
+    mode: 0644
+
+- name: 'Creating CA certificate and key'
+  command: >
+    openssl req -new
+      -x509
+      -nodes
+      -extensions v3_ca
+      -config "{{ foreman_ca_directory }}/openssl.cnf"
+      -keyout "{{ foreman_ca_directory_keys }}/root_ca.key"
+      -out "{{ foreman_ca_directory_certs }}/root_ca.crt"
+  args:
+    creates: "{{ foreman_ca_directory_certs }}/root_ca.crt"

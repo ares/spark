@@ -1,0 +1,63 @@
+---
+- import_tasks: server_cert.yml
+- import_tasks: client_cert.yml
+
+- name: Create foreman dir
+  file:
+    state: directory
+    path: /etc/foreman-proxy
+
+- name: Create foreman dir
+  file:
+    state: directory
+    path: /etc/foreman
+
+- name: Read CA cert
+  slurp:
+    src: "{{ foreman_ca_directory_certs }}/root_ca.crt"
+  register: ca_cert
+
+- name: Read client cert
+  slurp:
+    src: "{{ foreman_ca_directory_certs }}/{{ foreman_hostname }}-client.crt"
+  register: client_cert
+
+- name: Read client key
+  slurp:
+    src: "{{ foreman_ca_directory_keys }}/{{ foreman_hostname }}-client.key"
+  register: client_key
+
+- name: Read server cert
+  slurp:
+    src: "{{ foreman_ca_directory_certs }}/{{ foreman_hostname }}-server.crt"
+  register: server_cert
+
+- name: Read server key
+  slurp:
+    src: "{{ foreman_ca_directory_keys }}/{{ foreman_hostname }}-server.key"
+  register: server_key
+
+- set_fact:
+    certs: {
+      foreman_client_cert: "{{ client_cert.content | b64decode }}",
+      foreman_client_key: "{{ client_key.content | b64decode }}",
+      foreman_client_ca: "{{ ca_cert.content | b64decode }}",
+
+      foreman_apache_server_cert: "{{ server_cert.content | b64decode }}",
+      foreman_apache_server_key: "{{ server_key.content | b64decode }}",
+      foreman_apache_server_ca: "{{ ca_cert.content | b64decode }}",
+
+      foreman_proxy_client_cert: "{{ client_cert.content | b64decode }}",
+      foreman_proxy_client_key: "{{ client_key.content | b64decode }}",
+      foreman_proxy_client_ca: "{{ ca_cert.content | b64decode }}",
+
+      foreman_proxy_server_cert: "{{ server_cert.content | b64decode }}",
+      foreman_proxy_server_key: "{{ server_key.content | b64decode }}",
+      foreman_proxy_server_ca: "{{ ca_cert.content | b64decode }}"
+    }
+
+- name: Write variable file
+  copy:
+    content: "{{ certs | to_nice_yaml }}"
+    dest: certs.yml
+  delegate_to: localhost

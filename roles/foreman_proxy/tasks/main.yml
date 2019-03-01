@@ -1,0 +1,67 @@
+---
+- name: 'Install foreman-proxy'
+  yum:
+    name: foreman-proxy
+    state: latest
+
+- name: 'Install smart_proxy_ansible'
+  yum:
+    name: rubygem-smart_proxy_ansible
+    state: latest
+
+- name: 'Settings file'
+  template:
+    src: settings.yml.j2
+    dest: /etc/foreman-proxy/settings.yml
+    owner: foreman-proxy
+    group: foreman-proxy
+
+- name: 'Write server certificate'
+  copy:
+    content: "{{ foreman_proxy_server_cert }}"
+    dest: /etc/foreman-proxy/ssl_cert.pem
+
+- name: 'Write server key'
+  copy:
+    content: "{{ foreman_proxy_server_key }}"
+    dest: /etc/foreman-proxy/ssl_key.pem
+
+- name: 'Write server CA certificate'
+  copy:
+    content: "{{ foreman_proxy_server_ca }}"
+    dest: /etc/foreman-proxy/ssl_ca.pem
+
+- name: 'Write client certificate'
+  copy:
+    content: "{{ foreman_proxy_client_cert }}"
+    dest: /etc/foreman-proxy/foreman_ssl_cert.pem
+
+- name: 'Write client key'
+  copy:
+    content: "{{ foreman_proxy_client_key }}"
+    dest: /etc/foreman-proxy/foreman_ssl_key.pem
+
+- name: 'Write client CA certificate'
+  copy:
+    content: "{{ foreman_proxy_client_ca }}"
+    dest: /etc/foreman-proxy/foreman_ssl_ca.pem
+
+- name: 'Start foreman-proxy'
+  service:
+    name: foreman-proxy
+    state: started
+
+- name: 'Start smart-proxy-dynflow-core'
+  service:
+    name: smart-proxy-dynflow-core
+    state: started
+
+- name: 'Registration playbook'
+  copy:
+    src: templates/register.yaml
+    dest: /etc/foreman-proxy/register.yaml
+    owner: root
+    group: root
+
+- name: 'Register'
+  command: "ansible-playbook /etc/foreman-proxy/register.yaml -e foreman_admin_password={{ foreman_admin_password }}"

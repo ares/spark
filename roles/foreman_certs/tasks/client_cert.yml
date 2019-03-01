@@ -1,0 +1,29 @@
+---
+- name: 'Create client key'
+  command: >
+    openssl genrsa
+      -out "{{ foreman_ca_directory_keys }}/{{ foreman_hostname }}-client.key"
+  args:
+    creates: "{{ foreman_ca_directory_keys }}/{{ foreman_hostname }}-client.key"
+
+- name: 'Create client signing request'
+  command: >
+    openssl req
+      -new
+      -config "{{ foreman_ca_directory }}/openssl.cnf"
+      -key "{{ foreman_ca_directory_keys }}/{{ foreman_hostname }}-client.key"
+      -out "{{ foreman_ca_directory_requests }}/{{ foreman_hostname }}-client.csr"
+  args:
+    creates: "{{ foreman_ca_directory_requests }}/{{ foreman_hostname }}-client.csr"
+
+- name: 'Create server certificate'
+  command: >
+    openssl ca
+      -create_serial
+      -batch
+      -extensions ssl_client
+      -config "{{ foreman_ca_directory }}/openssl.cnf"
+      -in "{{ foreman_ca_directory_requests }}/{{ foreman_hostname }}-client.csr"
+      -out "{{ foreman_ca_directory_certs }}/{{ foreman_hostname }}-client.crt"
+  args:
+    creates: "{{ foreman_ca_directory_certs }}/{{ foreman_hostname }}-client.crt"

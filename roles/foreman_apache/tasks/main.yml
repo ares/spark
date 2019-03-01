@@ -1,0 +1,35 @@
+---
+- name: 'Install Apache'
+  yum:
+    name: "{{ item }}"
+  with_items:
+    - httpd
+    - mod_ssl
+
+- name: 'Configure SSL Vhost'
+  template:
+    src: foreman-ssl.conf.j2
+    dest: /etc/httpd/conf.d/05-foreman-ssl.conf
+    owner: apache
+    group: apache
+    mode: 0644
+
+- name: 'Write server certificate'
+  copy:
+    content: "{{ foreman_apache_server_cert }}"
+    dest: "/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
+
+- name: 'Write server key'
+  copy:
+    content: "{{ foreman_apache_server_key }}"
+    dest: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
+
+- name: 'Write server CA certificate'
+  copy:
+    content: "{{ foreman_apache_server_ca }}"
+    dest: "/etc/pki/tls/certs/{{ ansible_fqdn }}-ca.crt"
+
+- name: 'Start Apache'
+  service:
+    name: httpd
+    state: restarted

@@ -1,0 +1,5 @@
+---
+foreman_ca_directory: /etc/pki/foreman
+foreman_ca_directory_keys: "{{ foreman_ca_directory }}/private"
+foreman_ca_directory_certs: "{{ foreman_ca_directory }}/certs"
+foreman_ca_directory_requests: "{{ foreman_ca_directory }}/requests"

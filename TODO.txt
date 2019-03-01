@@ -1,0 +1,6 @@
+PostgreSQL password should be randomly generated and stored, or we should support vault
+verify database.yml permissions, should be 0600
+also settings.yml
+Should we install certificate on local host, proxy would trust Foreman at least during registratio
+Proxy - ansible cfg configuration files
+Proxy - dynflow core configuration files

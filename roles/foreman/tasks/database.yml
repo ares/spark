@@ -1,0 +1,7 @@
+---
+- name: 'Migrate database'
+  command: foreman-rake db:migrate
+
+- name: 'Seed database'
+  shell: "SEED_ADMIN_PASSWORD={{ foreman_admin_password }} foreman-rake db:seed"
+

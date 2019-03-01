@@ -1,0 +1,87 @@
+# {{ ansible_managed }}
+
+<VirtualHost *:443>
+  ServerName {{ ansible_fqdn }}
+
+  ## Vhost docroot
+  DocumentRoot "/usr/share/foreman/public"
+
+  ## Directories, there should at least be a declaration for /usr/share/foreman/public
+  <Directory "/usr/share/foreman/public">
+    Options SymLinksIfOwnerMatch
+    AllowOverride None
+    Require all granted
+  </Directory>
+
+  RequestHeader set X_FORWARDED_PROTO 'https'
+
+  ProxyRequests Off
+  ProxyPreserveHost On
+  ProxyPass / http://localhost:3000/ retry=0
+  ProxyPassReverse / http://localhost:3000/
+
+  ## Logging
+  ErrorLog "/var/log/httpd/foreman-ssl_error_ssl.log"
+  ServerSignature Off
+  CustomLog "/var/log/httpd/foreman-ssl_access_ssl.log" combined
+
+  ## Server aliases
+  ServerAlias foreman
+
+  ## SSL directives
+  SSLEngine on
+  SSLCertificateFile      "{{ foreman_apache_server_cert }}"
+  SSLCertificateKeyFile   "{{ foreman_apache_server_key }}"
+  SSLCertificateChainFile "{{ foreman_apache_server_ca }}"
+  SSLCACertificateFile    "{{ foreman_apache_server_ca }}"
+  SSLVerifyClient         optional
+  SSLVerifyDepth          3
+  SSLOptions +StdEnvVars +ExportCertData
+  SSLProxyEngine On
+
+  ## Custom fragment
+  # Static public dir serving
+
+  <Directory /usr/share/foreman/public>
+    Require all granted
+  </Directory>
+
+  <Directory /usr/share/foreman/public/assets>
+
+    # Use standard http expire header for assets instead of ETag
+    <IfModule mod_expires.c>
+      Header unset ETag
+      FileETag None
+      ExpiresActive On
+      ExpiresDefault "access plus 1 year"
+    </IfModule>
+
+    # Return compressed assets if they are precompiled
+    <IfModule mod_rewrite.c>
+      RewriteEngine on
+      # Make sure the browser supports gzip encoding and file with .gz added
+      # does exist on disc before we rewrite with the extension
+      RewriteCond %{HTTP:Accept-Encoding} \b(x-)?gzip\b
+      RewriteCond %{REQUEST_FILENAME}.gz -s
+      RewriteRule ^(.+) $1.gz [L]
+      # Set headers for all possible assets which are compressed
+      <FilesMatch \.css\.gz$>
+        ForceType text/css
+        Header set Content-Encoding gzip
+        SetEnv no-gzip
+      </FilesMatch>
+      <FilesMatch \.js\.gz$>
+        ForceType text/javascript
+        Header set Content-Encoding gzip
+        SetEnv no-gzip
+      </FilesMatch>
+    </IfModule>
+
+  </Directory>
+
+  KeepAlive On
+  MaxKeepAliveRequests 100
+  KeepAliveTimeout 5
+
+  AddDefaultCharset UTF-8
+</VirtualHost>

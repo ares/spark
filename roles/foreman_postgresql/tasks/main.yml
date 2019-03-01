@@ -1,0 +1,42 @@
+---
+- name: 'Install postgres packages'
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+      - postgresql-server
+      - python-psycopg2
+
+- name: 'Init PostgreSQL database'
+  command: postgresql-setup initdb
+  args:
+    creates: /var/lib/pgsql/data/postgresql.conf
+
+- name: 'Deploy pg_hba.conf'
+  template:
+    src: pg_hba.conf.j2
+    dest: /var/lib/pgsql/data/pg_hba.conf
+    force: yes
+    mode: 0600
+    owner: postgres
+    group: postgres
+
+- name: 'Ensure PostgreSQL is running'
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: 'Add database user'
+  become_user: postgres
+  postgresql_user:
+    state: present
+    name: "{{ foreman_postgresql_user }}"
+    password: "{{ foreman_postgresql_password }}"
+
+- name: 'Create Foreman database'
+  become_user: postgres
+  postgresql_db:
+    state: present
+    name: "{{ foreman_postgresql_database }}"
+    owner: "{{ foreman_postgresql_user }}"

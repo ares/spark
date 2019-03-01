@@ -1,0 +1,14 @@
+---
+- name: 'Databse configuration'
+  template:
+    src: database.yml.j2
+    dest: /etc/foreman/database.yml
+    owner: foreman
+    group: foreman
+
+- name: 'Settings file'
+  template:
+    src: settings.yml.j2
+    dest: /etc/foreman/settings.yaml
+    owner: foreman
+    group: foreman

@@ -1,0 +1,26 @@
+---
+- name: 'Install foreman-release-scl'
+  yum:
+    name: foreman-release-scl
+    update_cache: yes
+    state: latest
+
+- name: 'Install foreman'
+  yum:
+    name: foreman
+    state: latest
+
+- name: 'Install tfm-rubygem-puma'
+  yum:
+    name: tfm-rubygem-puma
+    state: latest
+
+- name: 'Install foreman-postgresql'
+  yum:
+    name: foreman-postgresql
+    state: latest
+
+- name: 'Install foreman-ansible'
+  yum:
+    name: tfm-rubygem-foreman_ansible
+    state: latest

@@ -1,0 +1,17 @@
+---
+- name: 'Service file'
+  template:
+    src: foreman.service
+    dest: /usr/lib/systemd/system/foreman.service
+    owner: root
+    group: root
+
+- name: 'Start Foreman'
+  service:
+    name: foreman
+    state: started
+
+- name: 'Start dynflow'
+  service:
+    name: dynflowd
+    state: started

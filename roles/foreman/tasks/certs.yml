@@ -1,0 +1,15 @@
+---
+- name: 'Write client certificate'
+  copy:
+    content: "{{ foreman_client_cert }}"
+    dest: /etc/foreman/client_cert.pem
+
+- name: 'Write client key'
+  copy:
+    content: "{{ foreman_client_key }}"
+    dest: /etc/foreman/client_key.pem
+
+- name: 'Write client CA certificate'
+  copy:
+    content: "{{ foreman_client_ca }}"
+    dest: /etc/foreman/proxy_ca.pem
