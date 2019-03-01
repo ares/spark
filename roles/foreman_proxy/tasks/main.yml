@@ -50,11 +50,13 @@
   service:
     name: foreman-proxy
     state: started
+    enabled: yes
 
-- name: 'Start smart-proxy-dynflow-core'
+- name: 'Start smart_proxy_dynflow_core'
   service:
-    name: smart-proxy-dynflow-core
+    name: smart_proxy_dynflow_core
     state: started
+    enabled: yes
 
 - name: 'Registration playbook'
   copy:

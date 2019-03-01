@@ -1,6 +1,8 @@
 PostgreSQL password should be randomly generated and stored, or we should support vault
-verify database.yml permissions, should be 0600
-also settings.yml
-Should we install certificate on local host, proxy would trust Foreman at least during registratio
-Proxy - ansible cfg configuration files
-Proxy - dynflow core configuration files
+Should we install certificate on local host, proxy would trust Foreman at least during registration
+Proxy - ansible cfg configuration files seems deployed but check it's configuration
+Proxy - dynflow core configuration files seems deployed, but foreman_url seems to point to localhost
+Generate apipie:cache, /apidoc returns 404
+Install hammer
+selinux is required because of proxypass to puma, we should update selinux policy and then drop this role
+certs.yml should be set 0600

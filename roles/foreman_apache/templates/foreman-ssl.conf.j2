@@ -30,10 +30,10 @@
 
   ## SSL directives
   SSLEngine on
-  SSLCertificateFile      "{{ foreman_apache_server_cert }}"
-  SSLCertificateKeyFile   "{{ foreman_apache_server_key }}"
-  SSLCertificateChainFile "{{ foreman_apache_server_ca }}"
-  SSLCACertificateFile    "{{ foreman_apache_server_ca }}"
+  SSLCertificateFile      "/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
+  SSLCertificateKeyFile   "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
+  SSLCertificateChainFile "/etc/pki/tls/certs/{{ ansible_fqdn }}-ca.crt"
+  SSLCACertificateFile    "/etc/pki/tls/certs/{{ ansible_fqdn }}-ca.crt"
   SSLVerifyClient         optional
   SSLVerifyDepth          3
   SSLOptions +StdEnvVars +ExportCertData

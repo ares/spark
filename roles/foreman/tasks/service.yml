@@ -10,8 +10,10 @@
   service:
     name: foreman
     state: started
+    enabled: yes
 
 - name: 'Start dynflow'
   service:
     name: dynflowd
     state: started
+    enabled: yes

@@ -1,18 +1,20 @@
 ---
-- hosts: all
+- hosts: localhost
   become: true
   vars:
     selinux_state: disabled
   roles:
     - epel_repositories
-#    - selinux
+    - selinux
 
-- hosts: all
+- hosts: localhost
   become: true
   vars:
     foreman_admin_password: changeme
   pre_tasks:
-    - include_vars: certs.yml
+    - include_vars:
+        file: certs.yml
+      failed_when: false
   roles:
     - foreman_ca
     - foreman_certs
