@@ -9,6 +9,11 @@
     name: rubygem-smart_proxy_ansible
     state: latest
 
+- name: 'Install smart_proxy_ansible'
+  yum:
+    name: rubygem-smart_proxy_remote_execution_ssh
+    state: latest
+
 - name: 'Settings file'
   template:
     src: settings.yml.j2
@@ -46,6 +51,79 @@
     content: "{{ foreman_proxy_client_ca }}"
     dest: /etc/foreman-proxy/foreman_ssl_ca.pem
 
+- name: 'Create identity directory'
+  file:
+    path: "{{ foreman_proxy_remote_execution_ssh_dir }}"
+    state: directory
+    mode: '0700'
+    owner: foreman-proxy
+    group: foreman-proxy
+
+- name: 'Symlink proxy home .ssh to identity directory'
+  file:
+    dest: "/usr/share/foreman-proxy/.ssh"
+    src: "{{ foreman_proxy_remote_execution_ssh_dir }}"
+    owner: foreman-proxy
+    group: foreman-proxy
+    state: link
+
+- name: Generate /etc/ssh/ RSA host key
+  command: 'ssh-keygen -q -t rsa -b 4096 -f {{ foreman_proxy_remote_execution_ssh_dir }}/{{ foreman_proxy_remote_execution_ssh_keypair_name }} -C "Foreman Remote execuction key" -N ""'
+  args:
+    creates: "{{ foreman_proxy_remote_execution_ssh_dir }}/{{ foreman_proxy_remote_execution_ssh_keypair_name }}"
+
+- name: 'Set correct owner on private key'
+  file:
+    owner: foreman-proxy
+    group: foreman-proxy
+    path: "{{ foreman_proxy_remote_execution_ssh_dir }}/{{ foreman_proxy_remote_execution_ssh_keypair_name }}"
+    
+- name: 'Set correct owner on public key'
+  file:
+    owner: foreman-proxy
+    group: foreman-proxy
+    path: "{{ foreman_proxy_remote_execution_ssh_dir }}/{{ foreman_proxy_remote_execution_ssh_keypair_name }}.pub"
+
+# ansible 2.8 only
+#- name: 'Create key pair'
+#  openssh_keypair:
+#    comment: "Foreman Remote execuction key"
+#    group: foreman-proxy
+#    owner: foreman-proxy
+#    path: "{{ foreman_proxy_remote_execution_ssh_dir }}/{{ foreman_proxy_remote_execution_ssh_keypair_name }}"
+#    size: 4096
+#    type: rsa
+
+- name: 'Read REX SSH private key'
+  slurp:
+    src: "{{ foreman_proxy_remote_execution_ssh_dir }}/{{ foreman_proxy_remote_execution_ssh_keypair_name }}"
+  register: foreman_rex_ssh_private_key
+
+
+- name: 'Read REX SSH public key'
+  slurp:
+    src: "{{ foreman_proxy_remote_execution_ssh_dir }}/{{ foreman_proxy_remote_execution_ssh_keypair_name }}.pub"
+  register: foreman_rex_ssh_public_key
+
+- set_fact:
+    rex_ssh_keys: {
+      public: "{{ foreman_rex_ssh_public_key.content | b64decode }}",
+      private: "{{ foreman_rex_ssh_private_key.content | b64decode }}"
+    }
+
+- name: 'Write ssh keys file'
+  copy:
+    content: "{{ rex_ssh_keys | to_nice_yaml }}"
+    dest: ssh_keys.yml
+    mode: 0600
+  delegate_to: localhost
+
+- name: 'Install REX public key to  authorized keys for root'
+  authorized_key:
+    comment: Foreman Remote execuction key
+    key: "{{ rex_ssh_keys.public }}"
+    user: root
+
 - name: 'Start foreman-proxy'
   service:
     name: foreman-proxy
@@ -67,3 +145,4 @@
 
 - name: 'Register'
   command: "ansible-playbook /etc/foreman-proxy/register.yaml -e foreman_admin_password={{ foreman_admin_password }}"
+

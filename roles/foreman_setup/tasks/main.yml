@@ -1,5 +1,5 @@
 ---
-- name: 'Registration playbook'
+- name: 'Host registration playbook'
   copy:
     src: templates/register.yaml
     dest: /etc/foreman/register.yaml

@@ -15,6 +15,9 @@
     - include_vars:
         file: certs.yml
       failed_when: false
+    - include_vars:
+        file: ssh_keys.yml
+      failed_when: false
   roles:
     - foreman_ca
     - foreman_certs
