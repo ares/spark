@@ -58,3 +58,10 @@
       -out "{{ foreman_ca_directory_certs }}/root_ca.crt"
   args:
     creates: "{{ foreman_ca_directory_certs }}/root_ca.crt"
+
+- name: 'Adjust permission on root_ca'
+  file:
+    path: "{{ foreman_ca_directory_certs }}/root_ca.crt"
+    owner: root
+    group: root
+    mode: 0644

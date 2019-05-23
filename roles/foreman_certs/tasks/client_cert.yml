@@ -27,3 +27,10 @@
       -out "{{ foreman_ca_directory_certs }}/{{ foreman_hostname }}-client.crt"
   args:
     creates: "{{ foreman_ca_directory_certs }}/{{ foreman_hostname }}-client.crt"
+
+- name: 'Make the client certificate public'
+  file:
+    path: "{{ foreman_ca_directory_certs }}/{{ foreman_hostname }}-client.crt"
+    mode: 0644
+    owner: root
+    group: root

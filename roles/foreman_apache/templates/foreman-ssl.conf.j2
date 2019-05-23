@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 
 <VirtualHost *:443>
-  ServerName {{ ansible_fqdn }}
+  ServerName {{ foreman_hostname }}
 
   ## Vhost docroot
   DocumentRoot "/usr/share/foreman/public"
@@ -30,8 +30,8 @@
 
   ## SSL directives
   SSLEngine on
-  SSLCertificateFile      "/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
-  SSLCertificateKeyFile   "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
+  SSLCertificateFile      "/etc/pki/tls/certs/{{ foreman_hostname }}.crt"
+  SSLCertificateKeyFile   "/etc/pki/tls/private/{{ foreman_hostname }}.key"
   SSLCertificateChainFile "/etc/pki/tls/certs/{{ ansible_fqdn }}-ca.crt"
   SSLCACertificateFile    "/etc/pki/tls/certs/{{ ansible_fqdn }}-ca.crt"
   SSLVerifyClient         optional

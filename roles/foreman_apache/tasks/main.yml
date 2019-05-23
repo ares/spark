@@ -17,12 +17,12 @@
 - name: 'Write server certificate'
   copy:
     content: "{{ foreman_apache_server_cert }}"
-    dest: "/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
+    dest: "/etc/pki/tls/certs/{{ foreman_hostname }}.crt"
 
 - name: 'Write server key'
   copy:
     content: "{{ foreman_apache_server_key }}"
-    dest: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
+    dest: "/etc/pki/tls/private/{{ foreman_hostname }}.key"
 
 - name: 'Write server CA certificate'
   copy:

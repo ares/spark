@@ -43,10 +43,10 @@ req_extensions      = v3_req
 prompt              = no
 
 [ req_distinguished_name ]
-countryName            = US
-stateOrProvinceName    = NC
-localityName           = Raleigh
-organizationName       = Foreman
+countryName            = {{ foreman_ca_country_name }}
+stateOrProvinceName    = {{ foreman_ca_state_or_province }}
+localityName           = {{ foreman_ca_locality_name }}
+organizationName       = {{ foreman_ca_organization_name }}
 commonName             = {{ ansible_fqdn }}
 
 [ v3_ca ]
