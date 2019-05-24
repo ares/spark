@@ -1,5 +1,5 @@
 ---
-- hosts: localhost
+- hosts: all
   become: true
   vars:
     selinux_state: disabled
@@ -7,7 +7,7 @@
     - epel_repositories
     - selinux
 
-- hosts: localhost
+- hosts: all
   become: true
   vars:
     foreman_admin_password: changeme

@@ -4,4 +4,3 @@
 
 - name: 'Seed database'
   shell: "SEED_ADMIN_PASSWORD='{{ foreman_admin_password }}' SEED_LOCATION='{{ foreman_default_location }}' SEED_ORGANIZATION='{{ foreman_default_organization }}' foreman-rake db:seed"
-
