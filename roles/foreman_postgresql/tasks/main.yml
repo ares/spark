@@ -21,10 +21,18 @@
     owner: postgres
     group: postgres
 
+- name: Set listen addresses to *
+  lineinfile:
+    dest: /var/lib/pgsql/data/postgresql.conf
+    regexp: "^listen_addresses"
+    line: "listen_addresses = '*'"
+    state: present
+    backup: yes
+
 - name: 'Ensure PostgreSQL is running'
   service:
     name: postgresql
-    state: started
+    state: restarted
     enabled: yes
 
 - name: 'Add database user'

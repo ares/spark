@@ -1,0 +1,6 @@
+---
+foreman_proxy_register_foreman_host: "{{ ansible_fqdn }}"
+foreman_proxy_register_foreman_url: "https://{{ foreman_proxy_foreman_host }}/api/v2/smart_proxies"
+foreman_proxy_register_data:
+  name: "{{ ansible_fqdn }}"
+  url: "https://{{ ansible_fqdn }}:9090"

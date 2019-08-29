@@ -1,16 +1,16 @@
 ---
-- name: 'Database configuration'
-  template:
-    src: database.yml.j2
-    dest: /etc/foreman/database.yml
-    owner: foreman
-    group: foreman
-    mode: 0600
-
 - name: 'Settings file'
   template:
     src: settings.yml.j2
     dest: /etc/foreman/settings.yaml
+    owner: foreman
+    group: foreman
+    mode: 0600
+
+- name: 'Database configuration'
+  template:
+    src: database.yml.j2
+    dest: /etc/foreman/database.yml
     owner: foreman
     group: foreman
     mode: 0600

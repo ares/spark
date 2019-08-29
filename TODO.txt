@@ -6,3 +6,4 @@ Generate apipie:cache, /apidoc returns 404
 Install hammer
 selinux is required because of proxypass to puma, we should update selinux policy and then drop this role
 certs.yml should be set 0600
+support postgres running on localhost

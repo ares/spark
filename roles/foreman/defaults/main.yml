@@ -1,4 +1,6 @@
 ---
-foreman_database_name: foreman
+foreman_database: "foreman"
+foreman_database_user: "foreman"
+foreman_database_password: "foreman"
 foreman_default_location: Datacenter 1
 foreman_default_organization: Default Organization

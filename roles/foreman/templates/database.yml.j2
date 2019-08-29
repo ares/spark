@@ -1,7 +1,8 @@
 ---
 production:
   adapter: postgresql
-  database: {{ foreman_database_name }}
-  user: {{ foreman_database_name }}
-  password: {{ foreman_database_name }}
+  host: {{ foreman_database_host }}
+  database: {{ foreman_database }}
+  user: {{ foreman_database_user }}
+  password: {{ foreman_database_password }}
   pool: 5

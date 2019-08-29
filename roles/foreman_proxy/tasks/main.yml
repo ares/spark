@@ -57,13 +57,3 @@
     name: smart_proxy_dynflow_core
     state: started
     enabled: yes
-
-- name: 'Registration playbook'
-  copy:
-    src: templates/register.yaml
-    dest: /etc/foreman-proxy/register.yaml
-    owner: root
-    group: root
-
-- name: 'Register'
-  command: "ansible-playbook /etc/foreman-proxy/register.yaml -e foreman_admin_password={{ foreman_admin_password }}"

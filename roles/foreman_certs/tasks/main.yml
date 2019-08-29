@@ -57,6 +57,7 @@
     }
 
 - name: Write variable file
+  become: false
   copy:
     content: "{{ certs | to_nice_yaml }}"
     dest: certs.yml

@@ -1,0 +1,11 @@
+---
+foreman_setup_foreman_host: "{{ ansible_fqdn }}"
+foreman_setup_foreman_url: "https://{{ foreman_setup_foreman_host }}/api/v2/hosts"
+foreman_setup_data:
+  host:
+    name: "{{ ansible_fqdn }}"
+    location_id: 2
+    organization_id: 1
+    ip: "{{ ansible_default_ipv4.address }}"
+    build: false
+    managed: false

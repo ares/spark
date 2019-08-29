@@ -23,10 +23,10 @@
 # the hosts which the proxy accepts connections from
 # commenting the following lines would mean every verified SSL connection allowed
 :trusted_hosts:
-  - {{ ansible_fqdn }}
+  - {{ foreman_proxy_foreman_host }}
 
 # Endpoint for reverse communication
-:foreman_url: https://{{ ansible_fqdn }}
+:foreman_url: https://{{ foreman_proxy_foreman_host }}
 
 # SSL settings for client authentication against Foreman. If undefined, the values
 # from general SSL options are used instead. Mainly useful when Foreman uses

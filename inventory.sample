@@ -1,0 +1,17 @@
+# Define the systems being used to install the components
+# If performing an all-in-one installation ensure the same
+# host is referenced for each category
+
+localhost ansible_connection=local
+
+[all]
+localhost
+
+[foreman]
+localhost
+
+[database]
+localhost
+
+[proxy]
+localhost

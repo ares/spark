@@ -1,5 +1,12 @@
 ---
 - hosts: all
+  tasks:
+    - set_fact:
+        foreman_database_password: "{{ lookup('password', '/tmp/passwordfile chars=ascii_letters,digits,hexdigits,punctuation') }}"
+        foreman_admin_password: changeme
+        foreman_hostname: "{{ hostvars[groups['foreman'][0]]['ansible_fqdn'] }}"
+
+- hosts: all
   become: true
   vars:
     selinux_state: disabled
@@ -7,20 +14,50 @@
     - epel_repositories
     - selinux
 
-- hosts: all
+- hosts: foreman
   become: true
-  vars:
-    foreman_admin_password: changeme
   pre_tasks:
     - include_vars:
-        file: certs.yml
+        file: ./certs.yml
       failed_when: false
   roles:
     - foreman_ca
     - foreman_certs
-    - foreman_repositories
+
+- hosts: database
+  become: true
+  vars:
+    foreman_postgresql_password: "{{ foreman_database_password }}"
+  roles:
     - foreman_postgresql
+
+- hosts: foreman
+  become: true
+  vars:
+    foreman_database_host: "{{ hostvars[groups['database'][0]]['ansible_fqdn'] }}"
+    foreman_setup_foreman_host: "{{ foreman_hostname }}"
+  pre_tasks:
+    - include_vars:
+        file: ./certs.yml
+      failed_when: false
+  roles:
+    - foreman_repositories
     - foreman
     - foreman_apache
+    - foreman_setup
+
+- hosts: proxy
+  become: true
+  vars:
+    foreman_setup_foreman_host: "{{ foreman_hostname }}"
+    foreman_proxy_foreman_host: "{{ foreman_hostname }}"
+    foreman_proxy_register_foreman_host: "{{ foreman_hostname }}"
+  pre_tasks:
+    - include_vars:
+        file: ./certs.yml
+      failed_when: false
+  roles:
+    - foreman_repositories
     - foreman_proxy
+    - foreman_proxy_register
     - foreman_setup
